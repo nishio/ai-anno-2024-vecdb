@@ -8,8 +8,8 @@ import logging
 import os
 from pathlib import Path
 
-from src.adapters import YouTubeAdapter
-from src.core import FAISSVectorDB, VectorDBBuilder
+from ai_anno_2024_vecdb.adapters import YouTubeAdapter
+from ai_anno_2024_vecdb.core import FAISSVectorDB, VectorDBBuilder
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
