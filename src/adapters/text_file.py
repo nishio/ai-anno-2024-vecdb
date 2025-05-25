@@ -21,7 +21,7 @@ class TextFileAdapter:
         directory_path: Union[str, Path],
         file_extension: str = ".txt",
         encoding: str = "utf-8",
-        metadata_extractor: Optional[callable] = None,
+        metadata_extractor: Optional[callable] = None,  # type: ignore
     ):
         """テキストファイルアダプターを初期化します。
 
@@ -95,7 +95,7 @@ class TextDirectoryAdapter:
         directory_paths: List[Union[str, Path]],
         file_extension: str = ".txt",
         encoding: str = "utf-8",
-        metadata_extractor: Optional[callable] = None,
+        metadata_extractor: Optional[callable] = None,  # type: ignore
     ):
         """テキストディレクトリアダプターを初期化します。
 
