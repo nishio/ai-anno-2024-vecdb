@@ -1,6 +1,6 @@
 # はじめに
 
-このドキュメントでは、ai-anno-2024-vecdbの基本的な使い方を説明します。
+このドキュメントでは、ai-anno-2024-vecdbの基本的な使い方を説明します。ローカルの埋め込みモデルを使用するため、APIキーは必要ありません。
 
 ## インストール
 
@@ -12,19 +12,12 @@ cd ai-anno-2024-vecdb
 pip install -e .
 ```
 
-## 環境変数の設定
+## 依存関係のインストール
 
-Google Generative AI APIキーを環境変数として設定します。
+必要なパッケージをインストールします。
 
 ```bash
-export GOOGLE_API_KEY="your-api-key"
-```
-
-または、Pythonコード内で設定することもできます。
-
-```python
-import os
-os.environ["GOOGLE_API_KEY"] = "your-api-key"
+pip install sentence-transformers langchain langchain-community faiss-cpu
 ```
 
 ## 基本的な使い方
@@ -52,9 +45,10 @@ adapter = TextFileAdapter(
 # ドキュメントの取得
 documents = adapter.get_documents()
 
-# ベクトルデータベースの作成
+# ベクトルデータベースの作成（ローカルの埋め込みモデルを使用）
 vector_db = FAISSVectorDB(
-    embedding_model="models/text-embedding-004",
+    embedding_model="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    use_local_embeddings=True,  # ローカルの埋め込みモデルを使用
     text_splitter=text_splitter,
 )
 vector_db.build_from_documents(documents)
@@ -93,9 +87,10 @@ adapter = CSVFileAdapter(
 # ドキュメントの取得
 documents = adapter.get_documents()
 
-# ベクトルデータベースの作成
+# ベクトルデータベースの作成（ローカルの埋め込みモデルを使用）
 vector_db = FAISSVectorDB(
-    embedding_model="models/text-embedding-004",
+    embedding_model="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    use_local_embeddings=True,  # ローカルの埋め込みモデルを使用
     text_splitter=text_splitter,
 )
 vector_db.build_from_documents(documents)
@@ -121,7 +116,8 @@ python -m ai_anno_2024_vecdb.cli.create_vector_db from-text \
     --file-extension .txt \
     --chunk-size 1000 \
     --chunk-overlap 200 \
-    --embedding-model models/text-embedding-004
+    --embedding-model sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 \
+    --use-local-embeddings
 ```
 
 ### CSVファイルからベクトルデータベースを作成する
@@ -135,5 +131,6 @@ python -m ai_anno_2024_vecdb.cli.create_vector_db from-csv \
     --metadata-column カテゴリ \
     --chunk-size 1000 \
     --chunk-overlap 200 \
-    --embedding-model models/text-embedding-004
+    --embedding-model sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 \
+    --use-local-embeddings
 ```

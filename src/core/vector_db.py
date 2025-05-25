@@ -13,7 +13,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from langchain.schema.document import Document
 from langchain.text_splitter import TextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.vectorstores.base import VectorStore
+from langchain_community.vectorstores import VectorStore
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 logger = logging.getLogger(__name__)
@@ -68,17 +69,31 @@ class FAISSVectorDB(VectorDB):
 
     def __init__(
         self, 
-        embedding_model: str = "models/text-embedding-004",
+        embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        use_local_embeddings: bool = True,
         text_splitter: Optional[TextSplitter] = None
     ):
         """FAISSベクトルデータベースを初期化します。
 
         Args:
             embedding_model: 埋め込みモデルの名前。
+                ローカルモデルの場合は、HuggingFaceのモデル名を指定します。
+                APIモデルの場合は、Google AIのモデル名を指定します。
+            use_local_embeddings: ローカルの埋め込みモデルを使用するかどうか。
+                Trueの場合、HuggingFaceのモデルを使用します。
+                Falseの場合、Google AIのモデルを使用します（APIキーが必要）。
             text_splitter: テキスト分割器。
         """
         self.embedding_model = embedding_model
-        self.embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model)
+        self.use_local_embeddings = use_local_embeddings
+        
+        if use_local_embeddings:
+            logger.info(f"ローカルの埋め込みモデルを使用します: {embedding_model}")
+            self.embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+        else:
+            logger.info(f"Google AIの埋め込みモデルを使用します: {embedding_model}")
+            self.embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model)
+            
         self.vector_store: Optional[VectorStore] = None
         self.text_splitter = text_splitter
 
@@ -171,16 +186,23 @@ class VectorDBBuilder:
 
     def __init__(
         self, 
-        embedding_model: str = "models/text-embedding-004",
+        embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        use_local_embeddings: bool = True,
         text_splitter: Optional[TextSplitter] = None
     ):
         """ベクトルデータベースビルダーを初期化します。
 
         Args:
             embedding_model: 埋め込みモデルの名前。
+                ローカルモデルの場合は、HuggingFaceのモデル名を指定します。
+                APIモデルの場合は、Google AIのモデル名を指定します。
+            use_local_embeddings: ローカルの埋め込みモデルを使用するかどうか。
+                Trueの場合、HuggingFaceのモデルを使用します。
+                Falseの場合、Google AIのモデルを使用します（APIキーが必要）。
             text_splitter: テキスト分割器。
         """
         self.embedding_model = embedding_model
+        self.use_local_embeddings = use_local_embeddings
         self.text_splitter = text_splitter
 
     def build(self, documents: List[Document]) -> VectorDB:
@@ -194,6 +216,7 @@ class VectorDBBuilder:
         """
         vector_db = FAISSVectorDB(
             embedding_model=self.embedding_model,
+            use_local_embeddings=self.use_local_embeddings,
             text_splitter=self.text_splitter
         )
         vector_db.build_from_documents(documents)
@@ -208,6 +231,9 @@ class VectorDBBuilder:
         Returns:
             ベクトルデータベース。
         """
-        vector_db = FAISSVectorDB(embedding_model=self.embedding_model)
+        vector_db = FAISSVectorDB(
+            embedding_model=self.embedding_model,
+            use_local_embeddings=self.use_local_embeddings
+        )
         vector_db.load(path)
         return vector_db

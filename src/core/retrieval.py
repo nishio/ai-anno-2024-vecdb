@@ -16,6 +16,7 @@ from langchain.schema.document import Document
 from langchain.text_splitter import CharacterTextSplitter, TextSplitter
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 logger = logging.getLogger(__name__)
@@ -43,17 +44,27 @@ class FAISSRetriever(Retriever):
     def __init__(
         self,
         vector_db_path: Union[str, Path],
-        embedding_model: str = "models/text-embedding-004",
+        embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        use_local_embeddings: bool = True,
     ):
         """FAISSベースの検索機能を初期化します。
 
         Args:
             vector_db_path: ベクトルデータベースのパス。
             embedding_model: 埋め込みモデルの名前。
+            use_local_embeddings: ローカルの埋め込みモデルを使用するかどうか。
         """
         self.vector_db_path = Path(vector_db_path)
         self.embedding_model = embedding_model
-        self.embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model)
+        self.use_local_embeddings = use_local_embeddings
+        
+        if use_local_embeddings:
+            logger.info(f"ローカルの埋め込みモデルを使用します: {embedding_model}")
+            self.embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+        else:
+            logger.info(f"Google AIの埋め込みモデルを使用します: {embedding_model}")
+            self.embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model)
+            
         self.vector_store = None
         self._load_vector_store()
 
