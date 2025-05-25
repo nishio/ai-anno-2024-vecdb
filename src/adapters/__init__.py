@@ -5,6 +5,7 @@
 
 from .text_file import TextFileAdapter, TextDirectoryAdapter
 from .csv_file import CSVFileAdapter, CSVDirectoryAdapter, load_qa_dataset_from_csv
+from .youtube import YouTubeAdapter, YouTubePlaylistAdapter, YouTubeCSVAdapter
 
 __all__ = [
     "TextFileAdapter",
@@ -12,4 +13,7 @@ __all__ = [
     "CSVFileAdapter",
     "CSVDirectoryAdapter",
     "load_qa_dataset_from_csv",
+    "YouTubeAdapter",
+    "YouTubePlaylistAdapter",
+    "YouTubeCSVAdapter",
 ]
