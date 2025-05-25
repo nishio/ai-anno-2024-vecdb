@@ -130,3 +130,7 @@ youtube_adapter = YouTubeAdapter(
 - YouTubeのトランスクリプトは、ビデオの作成者が提供している場合にのみ取得できます。
 - 一部のビデオでは、指定した言語のトランスクリプトが利用できない場合があります。
 - YouTubeのAPIポリシーに従って使用してください。大量のリクエストを短時間に行うと、一時的にブロックされる可能性があります。
+- クラウドプロバイダー（AWS、Google Cloud Platform、Azureなど）のIPアドレスからのリクエストはYouTubeによってブロックされることがあります。この場合、以下の対処法があります：
+  - プロキシを使用してIPアドレスを隠す
+  - ローカル環境（クラウドプロバイダーのIPではない環境）で実行する
+  - 詳細は[youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api)のドキュメントを参照してください
