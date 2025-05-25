@@ -1,7 +1,8 @@
 """テキストファイルからベクトルデータベースを作成する例。
 
 このスクリプトは、テキストファイルからベクトルデータベースを作成し、
-簡単なクエリを実行する方法を示します。
+簡単なクエリを実行する方法を示します。ローカルの埋め込みモデルを使用するため、
+APIキーは必要ありません。
 """
 import logging
 import os
@@ -12,16 +13,14 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from ai_anno_2024_vecdb.adapters.text_file import TextFileAdapter
-from ai_anno_2024_vecdb.core.vector_db import FAISSVectorDB
+from src.adapters.text_file import TextFileAdapter
+from src.core.vector_db import FAISSVectorDB
 
 
 def main():
     """テキストファイルからベクトルデータベースを作成する例を実行します。"""
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
-
-    os.environ["GOOGLE_API_KEY"] = os.environ.get("OPENAI_API_KEY", "")
 
     input_dir = Path("examples/data/text")
     output_dir = Path("examples/output/vector_db")
@@ -54,7 +53,8 @@ def main():
     logger.info(f"{len(documents)}個のドキュメントを読み込みました")
 
     vector_db = FAISSVectorDB(
-        embedding_model="models/text-embedding-004",
+        embedding_model="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        use_local_embeddings=True,  # ローカルの埋め込みモデルを使用
         text_splitter=text_splitter,
     )
     vector_db.build_from_documents(documents)

@@ -3,8 +3,8 @@
 このパッケージは、ベクトルデータベースの中核機能を提供します。
 """
 
-from ai_anno_2024_vecdb.core.vector_db import FAISSVectorDB, VectorDB, VectorDBBuilder
-from ai_anno_2024_vecdb.core.retrieval import (
+from .vector_db import FAISSVectorDB, VectorDB, VectorDBBuilder
+from .retrieval import (
     BM25Processor,
     BM25Retriever,
     FAISSRetriever,
