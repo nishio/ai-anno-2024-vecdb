@@ -6,10 +6,12 @@
 """
 import logging
 import os
+import sys
 from pathlib import Path
 
-from ai_anno_2024_vecdb.adapters import YouTubeAdapter
-from ai_anno_2024_vecdb.core import FAISSVectorDB, VectorDBBuilder
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.adapters.youtube import YouTubeAdapter
+from src.core.vector_db import VectorDBBuilder
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
